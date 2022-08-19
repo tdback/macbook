@@ -4,4 +4,4 @@
 #
 alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl ."   
 alias vim=nvim
-alias config='/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME'
+alias config='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
