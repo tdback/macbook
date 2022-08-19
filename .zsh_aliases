@@ -1,0 +1,7 @@
+# Here are all of the aliases for the zsh shell
+# Called by .zshrc
+# Last modified: Thu Aug 18 22:12:17
+#
+alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl ."   
+alias vim=nvim
+alias config='/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME'
