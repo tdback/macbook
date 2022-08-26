@@ -25,6 +25,7 @@ set updatetime=50
 set termguicolors
 set cursorline
 set completeopt=menu,menuone,noselect,noinsert
+set cc=80
 
 call plug#begin("~/.vim/plugged")
 
