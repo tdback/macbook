@@ -131,6 +131,16 @@ lua require'lspconfig'.pylsp.setup{}
 " Racket LSP
 lua require'lspconfig'.racket_langserver.setup{}
 
+" C/C++ LSP
+lua require'lspconfig'.clangd.setup{}
+lua << EOF
+local nvim_lsp = require'lspconfig'
+
+nvim_lsp.clangd.setup({
+	on_attach=on_attach
+})
+EOF
+
 " Setup completion
 lua <<EOF
 local cmp = require'cmp'
