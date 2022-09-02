@@ -48,6 +48,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'simrat39/rust-tools.nvim'
+Plug 'nvim-lua/completion-nvim'
 Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
@@ -124,6 +125,31 @@ nvim_lsp.rust_analyzer.setup({
 })
 EOF
 lua require('rust-tools').setup({})
+
+" Go LSP
+lua require'lspconfig'.gopls.setup{}
+lua << EOF
+local nvim_lsp = require'lspconfig'
+
+local on_attach = function(client)
+	require'completion'.on_attach(client)
+end
+
+nvim_lsp.gopls.setup({
+	on_attach=on_attach,
+	cmd = {"gopls", "serve"},
+	single_file_support = true,
+	settings = {
+		["gopls"] = {
+			analyses = {
+				unusedparams = true,
+				shadow = true,
+			},
+			staticcheck = true,
+		},
+	},
+})
+EOF
 
 " Python LSP
 lua require'lspconfig'.pylsp.setup{}
