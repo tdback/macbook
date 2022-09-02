@@ -44,6 +44,9 @@ fi
 # Set vi mode 
 set -o vi
 
+# Set GOPATH
+export GOPATH=$HOME/Coding/Go/
+
 # Adding Ruby (brew version) to $PATH
 if [ -d "/usr/local/opt/ruby/bin"  ]; then
 	export PATH=/usr/local/opt/ruby/bin:$PATH
