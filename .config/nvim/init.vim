@@ -92,6 +92,16 @@ if has("autocmd")
     \| exe "normal! g'\"" | endif
 endif
 
+" Run gofmt on save
+function! CustomGoFmt()
+	let file = expand('%')
+	silent execute "!gofmt -w " . file
+endfunction
+
+augroup go_autocmd
+	autocmd BufWritePost *.go call CustomGoFmt()
+augroup END
+
 
 " Rust LSP
 lua require'lspconfig'.rust_analyzer.setup{}
