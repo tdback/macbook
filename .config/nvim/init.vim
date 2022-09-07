@@ -23,9 +23,10 @@ set scrolloff=8
 set cmdheight=2
 set updatetime=50
 set termguicolors
-set cursorline
 set completeopt=menu,menuone,noselect,noinsert
 set cc=80
+set cursorline
+set cursorlineopt=number
 
 call plug#begin("~/.vim/plugged")
 
@@ -39,6 +40,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'preservim/nerdcommenter'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Use TSInstall <language> to install support
 Plug 'tanvirtin/monokai.nvim'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -53,7 +55,8 @@ Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
-colorscheme monokai_pro
+" colorscheme monokai_pro
+colorscheme tokyonight-storm
 highlight Normal guibg=None
 
 " Tabs
