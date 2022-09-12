@@ -139,6 +139,9 @@ nvim_lsp.rust_analyzer.setup({
 EOF
 lua require('rust-tools').setup({})
 
+" TypeScript LSP
+lua require'lspconfig'.tsserver.setup{}
+
 " Go LSP
 lua require'lspconfig'.gopls.setup{}
 lua << EOF
