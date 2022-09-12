@@ -13,7 +13,7 @@ window:
     x: 5
     y: 5
   decorations: none
-  opacity: 0.9
+  opacity: 0.8
   title: Terminal
   
 scrolling:
