@@ -1,7 +1,16 @@
-# Here are all of the aliases for the zsh shell
-# Called by .zshrc
-# Last modified: Sat Aug 20 12:46:32
+# Aliases called by .zshrc
 
+# Vim 
+alias v=nvim
+alias vi=nvim
 alias vim=nvim
+
+# Dotfiles 
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+
+# Python
 alias python=python3
+alias ipy=ipython
+
+# Clojure
+alias lrepl='lein repl'
