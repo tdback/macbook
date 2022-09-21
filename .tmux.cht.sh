@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-languages=`echo "awk clojure cpp golang python racket rust scheme" | tr ' ' '\n'`
+languages=`echo "awk clojure cpp elixir golang python racket rust scheme" | tr ' ' '\n'`
 
 selected=`printf "$languages" | fzf`
 if [[ -z $selected  ]]; then
