@@ -46,19 +46,40 @@ cmp.setup.cmdline(':', {
 	})
 })
 
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local on_attach = function(client)
+	require('completion').on_attach(client)
+end
+
 -- Python
-require("lspconfig").pylsp.setup{}
+require("lspconfig").pylsp.setup{
+	on_attach = on_attach,
+	capabilities = capabilities
+}
 
 -- Racket
-require("lspconfig").racket_langserver.setup{}
+require("lspconfig").racket_langserver.setup{
+	on_attach = on_attach,
+	capabilities = capabilities
+}
 
 -- Clojure
-require("lspconfig").clojure_lsp.setup{}
+require("lspconfig").clojure_lsp.setup{
+	on_attach = on_attach,
+	capabilities = capabilities
+}
 
 -- C/C++
-require("lspconfig").clangd.setup{}
+require("lspconfig").clangd.setup{
+	on_attach = on_attach,
+	capabilities = capabilities
+}
 
 -- Elixir
--- Coming soon...
+require("lspconfig").elixirls.setup{
+	cmd = { "/Users/relyt/.config/lsp/language_server.sh" },
+	on_attach = on_attach,
+	capabilities = capabilities
+}
 
 -- Add support for more languages

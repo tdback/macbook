@@ -58,4 +58,7 @@ return require("packer").startup(function()
 	use('Olical/conjure')
 	use('wlangstroth/vim-racket')
 
+	-- Elixir Support
+	use('elixir-editors/vim-elixir')
+
 end)
