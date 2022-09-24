@@ -21,4 +21,6 @@ vim.cmd([[
 	let g:NERDTreeDirArrowCollapsible = "~"
 
 	let g:AutoPairs={'(':')', '[':']', '{':'}',"'":"'",'"':'"', "`":"`", '```':'```', '"""':'"""', "'''":"'''"}
+
+	let g:conjure#log#wrap="true"
 ]])
