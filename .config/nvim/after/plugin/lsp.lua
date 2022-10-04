@@ -48,6 +48,16 @@ cmp.setup.cmdline(':', {
 
 -- Set up lspconfig
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local on_attach = function(_, bufnr)
+	vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+	  vim.lsp.diagnostic.on_publish_diagnostics, {
+		-- disable virtual text 
+		virtual_text = false,
+		-- disable severity signs
+		signs = false,
+	  }
+	)	
+end
 
 -- Python
 require("lspconfig")["pylsp"].setup{
@@ -61,7 +71,8 @@ require("lspconfig")["racket_langserver"].setup{
 
 -- Clojure
 require("lspconfig")["clojure_lsp"].setup{
-	capabilities = capabilities
+	capabilities = capabilities,
+	on_attach = on_attach
 }
 
 -- C/C++
