@@ -104,11 +104,6 @@ _G.packer_plugins = {
     path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/cmp-vsnip",
     url = "https://github.com/hrsh7th/cmp-vsnip"
   },
-  ["completion-nvim"] = {
-    loaded = true,
-    path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/completion-nvim",
-    url = "https://github.com/nvim-lua/completion-nvim"
-  },
   conjure = {
     loaded = true,
     path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/conjure",
