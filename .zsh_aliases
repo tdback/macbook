@@ -1,5 +1,8 @@
 # Aliases called by .zshrc
 
+# Terminal
+alias cp='cp -iv'
+
 # Vim 
 alias v=nvim
 alias vi=nvim
