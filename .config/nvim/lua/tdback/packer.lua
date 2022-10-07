@@ -53,10 +53,6 @@ return require("packer").startup(function()
 	-- tools and such
 	use('simrat39/rust-tools.nvim')
 
-	-- Lisp REPL 
-	use('Olical/conjure')
-	use('wlangstroth/vim-racket')
-
 	-- Elixir Support
 	use('elixir-editors/vim-elixir')
 

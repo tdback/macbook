@@ -104,11 +104,6 @@ _G.packer_plugins = {
     path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/cmp-vsnip",
     url = "https://github.com/hrsh7th/cmp-vsnip"
   },
-  conjure = {
-    loaded = true,
-    path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/conjure",
-    url = "https://github.com/Olical/conjure"
-  },
   ["lualine.nvim"] = {
     loaded = true,
     path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/lualine.nvim",
@@ -184,11 +179,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/vim-elixir",
     url = "https://github.com/elixir-editors/vim-elixir"
-  },
-  ["vim-racket"] = {
-    loaded = true,
-    path = "/Users/relyt/.local/share/nvim/site/pack/packer/start/vim-racket",
-    url = "https://github.com/wlangstroth/vim-racket"
   },
   ["vim-startify"] = {
     loaded = true,
