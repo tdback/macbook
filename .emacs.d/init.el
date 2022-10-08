@@ -363,6 +363,7 @@
 ;; add keybindings in general
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
+  ;; Add hooks for langs supported by lsp-mode
   :hook ((lsp-mode . td/lsp-mode-setup)
          (clojure-mode . lsp)
          (clojurec-mode . lsp)
@@ -393,7 +394,9 @@
 
 (use-package company
   :after lsp-mode
-  :hook (lsp-mode . company-mode)
+  ;; Must add hooks for langs not supported by lsp-mode
+  :hook ((lsp-mode . company-mode)
+         (sly-mode . company-mode))
   :bind (:map company-active-map
             ("RET" . company-complete-selection))
         (:map company-active-map
@@ -408,6 +411,19 @@
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
+
+(use-package sly
+  :config
+  (setq inferior-lisp-program "/usr/local/bin/sbcl"))
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp-deferred))))
+
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 (use-package projectile
   :diminish projectile-mode

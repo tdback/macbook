@@ -479,6 +479,7 @@
 ;; add keybindings in general
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
+  ;; Add hooks for langs supported by lsp-mode
   :hook ((lsp-mode . td/lsp-mode-setup)
          (clojure-mode . lsp)
          (clojurec-mode . lsp)
@@ -512,6 +513,11 @@
 
 *** lsp-treemacs
 
+- Use with =M-x=
+- =lsp-treemacs-symbols=- show a tree view of symbols in the current file
+- =lsp-treemacs-references=- show a tree view for the references of the symbol under the cursor
+- =lsp-treemacs-error-list=- show a tree view for the diagnostic messages in the project
+
 #+begin_src emacs-lisp
 
 (use-package lsp-treemacs
@@ -521,6 +527,10 @@
 
 *** lsp-ivy
 
+- Use with =M-x=
+- =lsp-ivy-workshapce-symbol=- search for a symbol name in the current project workspace
+- =lsp-ivy-global-workspace-symbol=- search for a symbol name in all active project workspaces
+
 #+begin_src emacs-lisp
 
 (use-package lsp-ivy)
@@ -529,26 +539,65 @@
 
 ** Company-mode
 
+- Provides =RET= completions, using =TAB= and =S-TAB= for cycling through selections
+
 #+begin_src emacs-lisp
 
-    (use-package company
-      :after lsp-mode
-      :hook (lsp-mode . company-mode)
-      :bind (:map company-active-map
-                ("RET" . company-complete-selection))
-            (:map company-active-map
-                ("<tab>" . company-select-next))
-            (:map company-active-map
-                ("<backtab>" . company-select-previous))
-            (:map lsp-mode-map
-                ("<tab>" . company-indent-or-complete-common))
-      :custom
-      (company-minimum-prefix-length 1)
-      (company-idle-delay 0.0))
+(use-package company
+  :after lsp-mode
+  ;; Must add hooks for langs not supported by lsp-mode
+  :hook ((lsp-mode . company-mode)
+         (sly-mode . company-mode))
+  :bind (:map company-active-map
+            ("RET" . company-complete-selection))
+        (:map company-active-map
+            ("<tab>" . company-select-next))
+        (:map company-active-map
+            ("<backtab>" . company-select-previous))
+        (:map lsp-mode-map
+            ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
 
-    (use-package company-box
-      :hook (company-mode . company-box-mode))
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 
+#+end_src
+
+** Sly
+
+- Common Lisp REPL
+- Run using =M-x= =sly=
+
+#+begin_src emacs-lisp
+
+(use-package sly
+  :config
+  (setq inferior-lisp-program "/usr/local/bin/sbcl"))
+
+#+end_src
+
+** Python
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-pyright
+    :ensure t
+    :hook (python-mode . (lambda ()
+                            (require 'lsp-pyright)
+                            (lsp-deferred))))
+
+#+end_src
+
+** Commenting Lines
+
+- =M-/= to comment/uncomment lines
+
+#+begin_src emacs-lisp
+
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 #+end_src
 
 ** Projectile
