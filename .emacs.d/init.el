@@ -51,7 +51,7 @@
 (save-place-mode 1)
 (setq save-place-forget-unreadable-files nil)
 
-;; UTF-8
+;; UTF-8 encoding
 (prefer-coding-system 'utf-8)
 
 ;; Set font
@@ -61,7 +61,7 @@
 (set-face-attribute 'fixed-pitch nil :font "Anonymous Pro")
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Fira Code")
+(set-face-attribute 'variable-pitch nil :font "Anonymous Pro")
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -360,7 +360,6 @@
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project))
   (lsp-headerline-breadcrumb-mode))
 
-;; add keybindings in general
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   ;; Add hooks for langs supported by lsp-mode
@@ -406,7 +405,7 @@
         (:map lsp-mode-map
             ("<tab>" . company-indent-or-complete-common))
   :custom
-  (company-minimum-prefix-length 1)
+  (company-minimum-prefix-length 2)
   (company-idle-delay 0.0))
 
 (use-package company-box
@@ -443,3 +442,7 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package term
+  :config
+  (setq explicit-shell-file-name "zsh"))
