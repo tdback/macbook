@@ -1,9 +1,21 @@
+;; The default is 800 kilobytes. Measured in bytes
+(setq gc-cons-threshold (* 50 1000 1000))
+
+(defun td/display-startup-time ()
+(message "Emacs loaded in %s with %d garbage collections."
+         (format "%.2f seconds"
+                 (float-time
+                  (time-subtract after-init-time before-init-time)))
+         gcs-done))
+
+(add-hook 'emacs-startup-hook #'td/display-startup-time)
+
 ;; Initialize package sources
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+			     ("org" . "https://orgmode.org/elpa/")
+			     ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -15,6 +27,14 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(use-package auto-package-update
+  :custom
+  (auto-package-update-interval 7)
+  (auto-package-update-prompt-before-update t)
+  :config
+  (auto-package-update-maybe)
+  (auto-package-update-at-time "09:00"))
 
 (setq inhibit-startup-message t)
 
@@ -119,9 +139,10 @@
 (use-package all-the-icons)
 
 (use-package which-key
-  :init (which-key-mode)
+  :defer 0
   :diminish which-key-mode
   :config
+  (which-key-mode)
   (setq which-key-idle-delay 0.3))
 
 (use-package ivy
@@ -176,6 +197,9 @@
 
 (td/leader-keys
  "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+(add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
+(add-hook 'lisp-mode-hook 'prettify-symbols-mode)
 
 (defun td/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -319,7 +343,6 @@
   (td/org-font-setup))
 
 (use-package org-bullets
-  :after org
   :hook (org-mode . org-bullets-mode)
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
@@ -332,20 +355,22 @@
 (use-package visual-fill-column
   :hook (org-mode . td/org-mode-visual-fill))
 
-(org-babel-do-load-languages
-  'org-babel-load-languages
-  '((emacs-lisp . t)
-    (python . t)))
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)
+      (python . t)))
 
-(push '("conf-unix" . conf-unix) org-src-lang-modes)
+  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
-;; This is needed as of Org 9.2
-(require 'org-tempo)
+(with-eval-after-load 'org
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
 
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("sq" . "src sqlite"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("sq" . "src sqlite")))
 
 ;; Automatically tangle out Emacs.org config file when we save it
 (defun td/org-babel-tangle-config ()
@@ -363,23 +388,10 @@
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  ;; Add hooks for langs supported by lsp-mode
-  :hook ((lsp-mode . td/lsp-mode-setup)
-         (clojure-mode . lsp)
-         (clojurec-mode . lsp)
-         (clojurescript-mode . lsp))
+  :hook (lsp-mode . td/lsp-mode-setup)
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
-  (setenv "PATH" (concat
-                  "/usr/local/bin" path-separator
-                  (getenv "PATH")))
-  (dolist (m '(clojure-mode
-               clojurec-mode
-               clojurescript-mode
-               clojurex-mode))
-    (add-to-list 'lsp-language-id-configuration '(,m . "clojure")))
-  (setq lsp-clojure-server-command '("/usr/local/bin/clojure-lsp"))
   (lsp-enable-which-key-integration t))
 
 (use-package lsp-ui
@@ -390,7 +402,8 @@
 (use-package lsp-treemacs
   :after lsp)
 
-(use-package lsp-ivy)
+(use-package lsp-ivy
+  :after lsp)
 
 (use-package company
   :after lsp-mode
@@ -413,6 +426,8 @@
   :hook (company-mode . company-box-mode))
 
 (use-package sly
+  :ensure t
+  :commands (sly sly-connect)
   :config
   (setq inferior-lisp-program "/usr/local/bin/sbcl"))
 
@@ -421,6 +436,11 @@
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp-deferred))))
+
+(use-package clojure-mode
+  :ensure t
+  :mode "\\.clj\\'"
+  :hook (clojure-mode . lsp-deferred))
 
 (use-package evil-nerd-commenter
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
@@ -437,14 +457,17 @@
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package counsel-projectile
+  :after projectile
   :config (counsel-projectile-mode))
 
-(use-package magit)
+(use-package magit
+  :commands magit-status)
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package term
+  :commands term
   :config
   (setq explicit-shell-file-name "zsh"))
 
@@ -471,9 +494,34 @@
         eshell-scroll-to-bottom-on-input t))
 
 
-(use-package eshell-git-prompt)
+(use-package eshell-git-prompt
+  :after eshell)
 
 (use-package eshell
   :hook (eshell-first-time-mode . td/configure-eshell)
   :config
   (eshell-git-prompt-use-theme 'robbyrussell))
+
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-up-directory
+    "l" 'dired-find-file))
+
+(use-package dired-single
+  :commands (dired dired-jump))
+
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
+
+;; Make gc pauses faster by decresing the threshold
+(setq gc-cons-threshold (* 2 1000 1000))
