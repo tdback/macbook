@@ -70,7 +70,7 @@
 (scroll-bar-mode -1)		; Disable visible scrollbar 
 (tool-bar-mode -1)		; Disable the toolbar
 (tooltip-mode -1)		; Disable tooltips
-(set-fringe-mode 5)		; Give some breathing room
+(set-fringe-mode 15)		; Give some breathing room
 
 (menu-bar-mode -1)	       	; Disable the menu bar
 
@@ -81,9 +81,9 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Set line numbers
-(column-number-mode)
-(setq display-line-numbers-type 'relative)
-(global-display-line-numbers-mode t)
+;; (column-number-mode)
+;; (setq display-line-numbers-type 'relative)
+;; (global-display-line-numbers-mode t)
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -92,7 +92,7 @@
                 shell-mode-hook
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
-               
+       
 ;; Scrolling like vim
 (setq scroll-margin 10)
 (setq scroll-step 1)
@@ -103,6 +103,9 @@
 
 ;; UTF-8 encoding
 (prefer-coding-system 'utf-8)
+
+;; Dont' ask to spell out "yes"
+(fset 'yes-or-no-p 'y-or-n-p)
 
 #+end_src
 
@@ -175,10 +178,12 @@
 
 ** Color Theme
 
+- Themes I like: doom-ayu-dark, nord, (insert more lol) 
+
 #+begin_src emacs-lisp
 
 (use-package doom-themes
-  :init (load-theme 'doom-ayu-dark t))
+  :init (load-theme 'doom-nord t))
 
 #+end_src
 
@@ -520,16 +525,15 @@
 
 #+begin_src emacs-lisp
 
-(defun td/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project))
-  (lsp-headerline-breadcrumb-mode))
-
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . td/lsp-mode-setup)
+  :hook ((c-mode . lsp-deferred)
+         (c++-mode . lsp-deferred)
+         (rust-mode . lsp-deferred))
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
+  (setq lsp-headerline-breadcrumb-enable nil)
   (lsp-enable-which-key-integration t))
 
 #+end_src
@@ -572,31 +576,65 @@
 
 #+end_src
 
-** Company-mode
+** Completion
 
-- Provides =RET= completions, using =TAB= and =S-TAB= for cycling through selections
+*** Orderless
 
 #+begin_src emacs-lisp
 
-(use-package company
-  :after lsp-mode
-  ;; Must add hooks for langs not supported by lsp-mode
-  :hook ((lsp-mode . company-mode)
-         (sly-mode . company-mode))
-  :bind (:map company-active-map
-            ("RET" . company-complete-selection))
-        (:map company-active-map
-            ("<tab>" . company-select-next))
-        (:map company-active-map
-            ("<backtab>" . company-select-previous))
-        (:map lsp-mode-map
-            ("<tab>" . company-indent-or-complete-common))
-  :custom
-  (company-minimum-prefix-length 2)
-  (company-idle-delay 0.0))
+(use-package orderless
+  :commands (orderless)
+  :custom (completion-styles '(orderless flex)))
 
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+#+end_src
+
+*** Corfu
+
+#+begin_src emacs-lisp
+
+(use-package corfu
+  :custom
+  (corfu-cycle t)                  ; Allow cycling through candidates
+  (corfu-auto t)                   ; Enable auto completion
+  (corfu-auto-prefix 2)            ; Enable auto completion
+  (corfu-auto-delay 0.0)           ; Enable auto completion
+  (corfu-quit-at-boundary 'separator)
+  (corfu-echo-documentation 0.25)  ; Enable auto completion
+  (corfu-preview-current 'insert)  ; Do not preview current candidate
+  (corfu-preselect-first nil)
+  :bind (:map corfu-map
+              ("M-SPC"      . corfu-insert-separator)
+              ("TAB"        . corfu-next)
+              ([tab]        . corfu-next)
+              ("S-TAB"      . corfu-previous)
+              ([backtab]    . corfu-previous)
+              ("S-<return>" . corfu-insert)
+              ("RET"        . nil)) ; Leave ENTER alone!
+  :init
+  ;; Use corfu everywhere
+  (global-corfu-mode)
+  ;; Save completion history for better sorting
+  (corfu-history-mode))
+
+#+end_src
+
+*** Cape
+
+#+begin_src emacs-lisp
+
+(use-package cape
+  :defer 10
+  :init
+  ;; Add 'completion-at-point-functions', used by 'completion-at-point'
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  ;; Nice completion to have available everywhere
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  :config
+  ;; Silence then pcomplete capf, no errors or messages!
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+  ;; Ensure that pcomplete does not write to the buffer
+  ;; and behaves as a pure 'completion-at-point-function'
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
 
 #+end_src
 
@@ -801,7 +839,7 @@
 
 #+begin_src emacs-lisp
 
-;; Make gc pauses faster by decresing the threshold
+;; Make gc pauses faster by decreasing the threshold
 (setq gc-cons-threshold (* 2 1000 1000))
  
 #+end_src
