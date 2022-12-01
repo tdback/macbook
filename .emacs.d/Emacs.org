@@ -818,8 +818,9 @@
   :bind (("C-x C-j" . dired-jump))
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-up-directory
-    "l" 'dired-find-file))
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer)
+  (setq dired-listing-switches "-Aloh"))
 
 (use-package dired-single
   :commands (dired dired-jump))
