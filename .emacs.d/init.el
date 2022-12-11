@@ -14,8 +14,8 @@
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			     ("org" . "https://orgmode.org/elpa/")
-			     ("elpa" . "https://elpa.gnu.org/packages/")))
+			     ("org"   . "https://orgmode.org/elpa/")
+			     ("elpa"  . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -132,7 +132,7 @@
   (evil-collection-init))
 
 (use-package doom-themes
-  :init (load-theme 'doom-nord t))
+  :init (load-theme 'doom-homage-black t))
 
 (use-package doom-modeline
   :ensure t
@@ -387,9 +387,10 @@
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook ((c-mode . lsp-deferred)
-         (c++-mode . lsp-deferred)
-         (rust-mode . lsp-deferred))
+  :hook ((c-mode       . lsp-deferred)
+         (c++-mode     . lsp-deferred)
+         (rust-mode    . lsp-deferred)
+         (clojure-mode . lsp-deferred))
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
@@ -460,11 +461,6 @@
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp-deferred))))
-
-(use-package clojure-mode
-  :ensure t
-  :mode "\\.clj\\'"
-  :hook (clojure-mode . lsp-deferred))
 
 (use-package evil-nerd-commenter
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))

@@ -29,8 +29,8 @@
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			     ("org" . "https://orgmode.org/elpa/")
-			     ("elpa" . "https://elpa.gnu.org/packages/")))
+			     ("org"   . "https://orgmode.org/elpa/")
+			     ("elpa"  . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -178,12 +178,12 @@
 
 ** Color Theme
 
-- Themes I like: doom-ayu-dark, nord, (insert more lol) 
+- Themes I like: doom-ayu-dark, nord, homage-black, vibrant, horizon, Iosvken 
 
 #+begin_src emacs-lisp
 
 (use-package doom-themes
-  :init (load-theme 'doom-nord t))
+  :init (load-theme 'doom-homage-black t))
 
 #+end_src
 
@@ -527,9 +527,10 @@
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook ((c-mode . lsp-deferred)
-         (c++-mode . lsp-deferred)
-         (rust-mode . lsp-deferred))
+  :hook ((c-mode       . lsp-deferred)
+         (c++-mode     . lsp-deferred)
+         (rust-mode    . lsp-deferred)
+         (clojure-mode . lsp-deferred))
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
@@ -662,17 +663,6 @@
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp-deferred))))
-
-#+end_src
-
-** Clojure
-
-#+begin_src emacs-lisp
-
-(use-package clojure-mode
-  :ensure t
-  :mode "\\.clj\\'"
-  :hook (clojure-mode . lsp-deferred))
 
 #+end_src
 
