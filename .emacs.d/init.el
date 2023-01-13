@@ -103,8 +103,8 @@
     "tt" '(counsel-load-theme :which-key "choose themse")))
 
 (general-define-key
- "C-x h" 'previous-buffer
- "C-x l" 'next-buffer)
+  "C-x h" 'previous-buffer
+  "C-x l" 'next-buffer)
 
 ;; VIM keybindings!!!
 (use-package evil
@@ -443,12 +443,14 @@
   :commands (lsp lsp-deferred)
   :hook ((c-mode       . lsp-deferred)
          (c++-mode     . lsp-deferred)
-         (rust-mode    . lsp-deferred)
-         (clojure-mode . lsp-deferred))
+         (rust-mode    . lsp-deferred))
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
   (setq lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-completion-provider :none) ; Disables warning for company-mode
+  (setq lsp-rust-analyzer-server-display-inlay-hints t)
+  (setq lsp-rust-analyzer-display-reborrow-hints "always")
   (lsp-enable-which-key-integration t))
 
 (use-package lsp-ui
@@ -516,6 +518,12 @@
                           (require 'lsp-pyright)
                           (lsp-deferred))))
 
+(use-package rust-mode
+  :ensure t :mode "\\.rs\\'"
+  :init
+  ;; scratchpad for Rust
+  (setq lsp-rust-clippy-preference "on"))
+
 (use-package evil-nerd-commenter
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
@@ -550,7 +558,33 @@
   :config
   (setq vterm-max-scrollback 10000))
 
+(defun td/eshell-prompt ()
+  (concat
+   "\n"
+   (propertize (abbreviate-file-name (eshell/pwd)) 'face `(:foreground "cyan"))
+   (if (zerop (user-uid))
+       (propertize " # " 'face `(:foreground "red"))
+     (propertize " λ " 'face `(:foreground "yellow")))))
+
 (defun td/configure-eshell ()
+  (require 'evil-collection-eshell)
+  (evil-collection-eshell-setup)
+
+  (require 'xterm-color)
+
+  (push 'xterm-color-filter eshell-preoutput-filter-functions)
+  (delq 'eshell-handle-ansi-color eshell-output-filter-functions)
+
+  (add-hook 'eshell-before-prompt-hook
+            (lambda ()
+              (setq xterm-color-preserve-properties t)))
+
+  ;;Use xterm-256color when running interactive commands
+  (add-hook 'eshell-pre-command-hook
+            (lambda () (setenv "TERM" "xterm-256color")))
+  (add-hook 'eshell-post-command-hook
+            (lambda () (setenv "TERM" "dumb")))
+
   ;; Save command history when commands are entered
   (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
@@ -558,23 +592,35 @@
   (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
   ;; Bind some useful keys for evil-mode
-  (evil-define-key '(normal insert visual) eshell-mode-map (kdb "C-r") 'counsel-esh-history)
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
 
   (evil-normalize-keymaps)
 
-  (setq eshell-history-size 10000
+  (setq eshell-prompt-function      'td/eshell-prompt
+        eshell-prompt-regexp        "^[^λ]+ λ "
+        eshell-history-size         10000
         eshell-buffer-maximum-lines 10000
-        eshell-hist-ignoredups t
+        eshell-hist-ignoredups      t
+        eshell-highlight-prompt     t
         eshell-scroll-to-bottom-on-input t))
-
 
 (use-package eshell-git-prompt
   :after eshell)
 
 (use-package eshell
-  :hook (eshell-first-time-mode . td/configure-eshell)
-  :config
-  (eshell-git-prompt-use-theme 'robbyrussell))
+  :hook (eshell-first-time-mode . td/configure-eshell))
+
+(use-package eshell-syntax-highlighting
+  :after eshell
+  :ensure t
+  :config (eshell-syntax-highlighting-global-mode +1))
+
+(use-package eshell-toggle
+  :custom
+  (eshell-toggle-size-fraction 3)
+  (eshell-toggle-run-command nil)
+  :bind
+  ("C-`" . eshell-toggle))
 
 (use-package dired
   :ensure nil
