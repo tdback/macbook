@@ -415,7 +415,8 @@
   (org-roam-dailies-capture-templates
    '(("d" "default" entry
       (file "~/RoamNotes/Templates/DailyCaptureTemplate.org")
-      :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+      :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n")
+      :empty-lines-before 1)))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
