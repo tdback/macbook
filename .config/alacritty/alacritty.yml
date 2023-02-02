@@ -12,9 +12,9 @@ window:
   padding:
     x: 5
     y: 5
-  decorations: none
-  opacity: 0.7
-  title: Terminal
+  # decorations: none
+  opacity: 1.0
+  title: Alacritty
   
 scrolling:
   history: 100000
