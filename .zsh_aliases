@@ -2,6 +2,9 @@
 
 # Terminal
 alias cp='cp -iv'
+alias rm='rm -Idv'
+alias ls='ls -Gp'
+alias malt='~/Scripts/Malt/malt.sh'
 
 # Vim 
 alias v=nvim
